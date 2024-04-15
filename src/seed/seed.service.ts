@@ -3,6 +3,7 @@ import axios, { AxiosInstance } from 'axios';
 import { Response } from 'express';
 import { PokeResponse } from './interfaces/poke-response.interface';
 import { PokemonService } from 'src/pokemon/pokemon.service';
+import { AxiosAdapter } from 'src/common/adapters/axios.adapter';
 
 @Injectable()
 export class SeedService {
@@ -10,13 +11,14 @@ export class SeedService {
   private readonly axios: AxiosInstance = axios;
 
   constructor(
-    private readonly pokemonService: PokemonService
+    private readonly pokemonService: PokemonService,
+    private readonly axiosAdapter: AxiosAdapter
   ) {}
 
   async executeSeed(res: Response) {
     await this.pokemonService.handleDeleteAllPokemons();
 
-    const {data} = await this.axios.get<PokeResponse>('https://pokeapi.co/api/v2/pokemon?limit=300');
+    const data = await this.axiosAdapter.get<PokeResponse>('https://pokeapi.co/api/v2/pokemon?limit=300');
 
     data.results.forEach(async ({name, url}) => {
       const segments = url.split('/');
