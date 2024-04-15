@@ -23,7 +23,6 @@ export class PokemonService {
     } catch (error) {
       return this.handlException(error, res);
     }
-
   }
 
   async findAll(res: Response) {
@@ -108,5 +107,27 @@ export class PokemonService {
     }
 
     return pokemon_db;
+  }
+
+  async handleCreatePokemon(createPokemonDto: CreatePokemonDto): Promise<number> {
+    createPokemonDto.name = createPokemonDto.name.toLowerCase().trim();
+
+    try {
+
+      const pokemon = await this.pokemonModel.create(createPokemonDto);
+      return 200;
+      
+    } catch (error) {
+      return 400;
+    }
+  }
+
+  async handleDeleteAllPokemons(): Promise<number> {
+    try {
+      await this.pokemonModel.deleteMany();
+      return 200;
+    } catch (error) {
+      return 400;
+    }
   }
 }
